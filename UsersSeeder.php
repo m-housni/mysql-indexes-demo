@@ -37,4 +37,4 @@ class UsersSeeder
     }
 }
 
-UsersSeeder::run(1000000);
+UsersSeeder::run(4000);

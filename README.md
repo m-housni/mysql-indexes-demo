@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS `test`.`test` (
 );
 ```
 
-## 3. Insert data (UsersSeeder.php)
+## 3. Insert data 10M rows (UsersSeeder.php)
 
 ``` php
 <?php
@@ -59,7 +59,7 @@ class UsersSeeder
     }
 }
 
-// UsersSeeder::run(1000000);
+// UsersSeeder::run(10000000);
 ```
 
 ## 4. Search
@@ -74,7 +74,7 @@ class Search {
     $start = round(microtime(true) * 1000);
 
     $db = new PDO('mysql:host=localhost;dbname=test', 'root', '');
-    $sql = "SELECT * FROM `users` WHERE `name` LIKE '%{$name}%'";
+    $sql = "SELECT * FROM `users` WHERE `name` = '{$name}'";
     $result = count($db->query($sql)->fetchAll(PDO::FETCH_ASSOC));
     $db = null;
     return array(
@@ -84,7 +84,7 @@ class Search {
   }
 }
 
-$res = Search::name('John');
+$res = Search::name('Darion');
 
 echo $res['result'].' / '.$res['time'];
 ```
@@ -92,23 +92,24 @@ echo $res['result'].' / '.$res['time'];
 ## 5. Search without index
 
 ```
-Search::name('John'); 
-// Output: 7586 / 410
-Search::name('Mohamed'); 
-// Output: 248 / 296
-Search::name('Gabriel');
-// Output: 951 / 252
+Search::name('Laura Kling'); 
+// Output: 8 results / 2385 ms
 ```
 
 ## 6. Create index
   
-  ```sql
-  CREATE INDEX `name` ON `users` (`name`);
-  ```
+```sql
+CREATE INDEX name_idx ON users(`name`);
+```
 
 ## 7. Search with index
+```
+Search::name('Laura Kling'); 
+// Output: 8 results / 8 ms
+```
 
 ## 8. Conclusion
+By creating an index on the `name` column, the search time is reduced from **2385 ms** to **8 ms**. This is a 99.7% improvement. This is a huge improvement for a simple search. Imagine the improvement for a complex search. 
 
 
 
